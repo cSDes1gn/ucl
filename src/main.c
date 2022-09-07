@@ -19,72 +19,15 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
-
-#ifndef F_CPU
-#define F_CPU 16000000UL                    // set the CPU clock
-#endif
-
-// Define baud rate
-#define USART_BAUDRATE 115200   
-//#define BAUD_PRESCALE (((F_CPU / (USART_BAUDRATE * 16UL))) - 1)
-#define BAUD_PRESCALE (unsigned int)( F_CPU / (16.0 * USART_BAUDRATE) - 0.5 )
-
-unsigned char value;  
-/* This variable is volatile so both main and RX interrupt can use it.
-It could also be a uint8_t type */
-
-/* Interrupt Service Routine for Receive Complete 
-NOTE: vector name changes with different AVRs see AVRStudio -
-Help - AVR-Libc reference - Library Reference - <avr/interrupt.h>: Interrupts
-for vector names other than USART_RXC_vect for ATmega32 */
-
-ISR(USART0_RX_vect){
-  cli();                   // clear interrupt	
-  value = UDR1;            // read UART register into value
-  PORTB = ~value;          // output inverted value on LEDs (0=on)
-  sei();                   // enable interrupts	
-}
-
-void usart_init(void){
-  // Set baud rate
-  /* Load upper 8-bits into the high byte of the UBRR register
-      Default frame format is 8 data bits, no parity, 1 stop bit
-      to change use UCSRC, see AVR datasheet */ 
-  cli();
-  // Enable receiver and transmitter and receive complete interrupt 
-  UCSR0B = (1<<TXEN1)|(1<<RXEN1)|(0<<UCSZ12)|(1<<RXCIE1);//|(1<<TXCIE1);
-  //8-bit data, 1 stop bit, Aynchronous USART, no parity	
-  UCSR0C = (1<<UCSZ11)|(1<<UCSZ10)|(0<<USBS1)|(0<<UMSEL11)|(0<<UMSEL10)|(0<<UPM11)|(0<<UPM10);
-  UBRR0H = (uint8_t) (BAUD_PRESCALE >> 8); 
-  UBRR0L = (uint8_t) (BAUD_PRESCALE);// Load lower 8-bits into the low byte of the UBRR register
-  sei();          // enable all interrupts
-}
-
-void USART_SendByte(unsigned char u8Data){
-  // Wait until last byte has been transmitted
-  while((UCSR0A &(1<<UDRE0)) == 0);
-  // Transmit data
-  UDR0 = u8Data;
-}
-
-// Wait until a byte has been received and return received data 
-uint8_t USART_ReceiveByte(){
-  while((UCSR0A &(1<<RXC0)) == 0);
-  return UDR0;
-}
-
-void led_init(void){
-  /* set pin 7 of PORTB for output*/
-  DDRB |= _BV(DDB7);
-}
+#include "usart.h"
 
 int main(void){
-  usart_init();   // Initialise USART
-  led_init();     // init LEDs for testing
-  value = 'A';    // 0x41;    
-  for(;;){                  // Repeat indefinitely
-    PORTB = PORTB ^ _BV(PORTB7);// toggle built in LED on TX
-    USART_SendByte(value);  // send value 
-    _delay_ms(1000);         // delay just to stop minicom screen cluttering    
+  usart_init();
+  /* set pin 7 of PORTB for output*/
+  DDRB |= _BV(DDB7);
+  for(;;){
+    PORTB = PORTB ^ _BV(PORTB7);
+    _delay_ms(500);
   }
+  return 0;
 }
