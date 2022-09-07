@@ -15,6 +15,6 @@
 
 void usart_init(void);
 void usart_blocking_send(unsigned char value);
-unsigned char usart_poll();
+unsigned char usart_poll(void);
 
 #endif // 
