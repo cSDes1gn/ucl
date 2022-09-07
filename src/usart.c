@@ -37,7 +37,7 @@ void usart_blocking_send(unsigned char value) {
   UDR0 = value;
 }
 
-uint8_t usart_poll() {
+unsigned char usart_poll() {
   while((UCSR0A & ( 1 << RXC0)) == 0);
   // read from USART data register RXD
   return UDR0;
