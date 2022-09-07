@@ -11,11 +11,11 @@
                 "${workspaceFolder}/**",
                 "${avr-core}/${avr-version}/avr/**",
 				"${avr-core}/${avr-version}/"
-
             ],
             "browse": {
                 "path": [
-                    "${workspaceFolder}/**"
+                    "${workspaceFolder}/**",
+                    "${avr-core}/${avr-version}/**"
                 ]
             },
             "defines": [
