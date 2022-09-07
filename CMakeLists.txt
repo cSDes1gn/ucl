@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.16)
 set(E_FUSE 0xfd)
 set(H_FUSE 0xd8)
 set(L_FUSE 0xff)
-set(LOCK_BIT 0xff)
+set(LOCK_BIT 0xcf)
 
 set(CMAKE_C_STANDARD 99)
 # set target system
@@ -19,8 +19,9 @@ set(MCU atmega2560)
 set(BAUDRATE 115200)
 # The programmer to use, read avrdude manual for list
 set(AVRDUDE_PROG_TYPE "wiring")
-set(SERIAL_PORT "/dev/tty.usbserial-A10JTC54")
 
+# set serial usb device for flashing
+set(SERIAL_PORT "/dev/tty.usbserial-A10JTC54")
 # setup toolchain paths
 set(CGT_ROOT "/usr/local/bin")
 
@@ -97,7 +98,7 @@ add_custom_target(hex ALL ${AVR_OBJCOPY} -R .eeprom -O ihex ${PROJECT_NAME}.elf 
 # Upload the firmware with avrdude
 add_custom_target(upload ${AVRDUDE} -c ${AVRDUDE_PROG_TYPE} -p${MCU} -P${SERIAL_PORT} -b${BAUDRATE} -D -Uflash:w:${PROJECT_NAME}.hex:i DEPENDS hex)
 # Burn fuses
-add_custom_target(fuses ${AVRDUDE} -c ${AVRDUDE_PROG_TYPE} -p ${MCU}  -U lfuse:w:${L_FUSE}:m -U hfuse:w:${H_FUSE}:m -U efuse:w:${E_FUSE}:m -U lock:w:${LOCK_BIT}:m)
+add_custom_target(fuses ${AVRDUDE} -c${AVRDUDE_PROG_TYPE} -p${MCU} -P${SERIAL_PORT} -b${BAUDRATE} -Ulfuse:w:${L_FUSE}:m -U hfuse:w:${H_FUSE}:m -U efuse:w:${E_FUSE}:m -U lock:w:${LOCK_BIT}:m)
 
 message(STATUS "Flagging additional files for cleaning")
 set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${PROJECT_NAME}.hex;${PROJECT_NAME}.eeprom;${PROJECT_NAME}.lst")
