@@ -4,7 +4,7 @@
 Using `avrdude` and `avr-gcc` utilities
 ```bash
 # compile
-avr-gcc main.c -DF_CPU=16000000 -mmcu=atmega2560 -Wall -Werror -Wextra -Os
+avr-gcc main.c usart.c -DF_CPU=16000000 -mmcu=atmega2560 -Wall -Werror -Wextra -Os
 # translate to hex
 avr-objcopy -j .text -j .data -O ihex a.out my.hex
 # flash
