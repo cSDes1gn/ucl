@@ -74,7 +74,7 @@ project(
   ${PROJECT_NAME}
   LANGUAGES CXX C
   VERSION "1.0.0"
-  DESCRIPTION "Avr-gcc firmware toolchain demo"
+  DESCRIPTION "Under-cabinet lighting firmware."
 )
 
 # cmake build guard
@@ -96,7 +96,7 @@ add_custom_target(strip ALL ${AVR_STRIP} ${PROJECT_NAME}.elf DEPENDS ${PROJECT_N
 # Transform binary into hex file, we ignore the eeprom segments in the step
 add_custom_target(hex ALL ${AVR_OBJCOPY} -R .eeprom -O ihex ${PROJECT_NAME}.elf ${PROJECT_NAME}.hex DEPENDS strip)
 # Upload the firmware with avrdude
-add_custom_target(upload ${AVRDUDE} -c ${AVRDUDE_PROG_TYPE} -p${MCU} -P${SERIAL_PORT} -b${BAUDRATE} -D -Uflash:w:${PROJECT_NAME}.hex:i DEPENDS hex)
+add_custom_target(flash ${AVRDUDE} -c ${AVRDUDE_PROG_TYPE} -p${MCU} -P${SERIAL_PORT} -b${BAUDRATE} -D -Uflash:w:${PROJECT_NAME}.hex:i DEPENDS hex)
 # Burn fuses
 add_custom_target(fuses ${AVRDUDE} -c${AVRDUDE_PROG_TYPE} -p${MCU} -P${SERIAL_PORT} -b${BAUDRATE} -Ulfuse:w:${L_FUSE}:m -U hfuse:w:${H_FUSE}:m -U efuse:w:${E_FUSE}:m -U lock:w:${LOCK_BIT}:m)
 
