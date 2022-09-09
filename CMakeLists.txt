@@ -85,8 +85,13 @@ if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
   )
 endif()
 
-message(STATUS "Building avr-gcc demo")
-add_executable(${PROJECT_NAME} src/main.c src/usart.c)
+message(STATUS "Configuring ucl source")
+add_executable(
+  ${PROJECT_NAME}
+  src/main.c
+  src/usart.c
+  src/eeprom.c
+)
 include_directories(include)
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME ${PROJECT_NAME}.elf)
 
