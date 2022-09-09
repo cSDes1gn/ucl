@@ -1,14 +1,16 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
+#include <stdlib.h>
 
 #include "usart.h"
 #include "eeprom.h"
 
 void eeprom_test(void) {
   uint8_t buffer = 0;
+  char buf = 0;
   eeprom_status_t result = EEPROM_SUCCESS;
-  for (int i = 0; i <= EEPROM_MAX_ADDR; i++) {
+  for (int i = 0; i <= 9; i++) {
     result = eeprom_write_byte(i, (uint8_t)i);
     if (result == EEPROM_FAILURE) {
       usart_blocking_send('W');
@@ -20,7 +22,7 @@ void eeprom_test(void) {
       usart_blocking_send('R');
       continue;
     }
-    usart_blocking_send(buffer);
+    usart_blocking_send(*itoa(buffer, &buf, 10));
     usart_blocking_send('\r');
     usart_blocking_send('\n');
     _delay_ms(200);
