@@ -50,7 +50,8 @@ eeprom_status_t eeprom_write_byte(uint16_t addr, uint8_t data) {
   EEAR = addr;
   EEDR = data;
   // start transaction
-  EECR |= (1 << EEMPE) | (1 << EEPE);
+  EECR |= (1 << EEMPE);
+  EECR |= (1 << EEPE);
   sei();
   return EEPROM_SUCCESS;
 }
