@@ -34,7 +34,9 @@ int main(void){
   // SCK of PORTB for outpu
   DDRB |= (1 << DDB1);
   for(;;){
-    info("Hello this is a test: %i, %f", 1, (float)0.0234);
+    const float pi = 3.1415926f;
+    info("Hello this is a test: %i", 1);
+    trace("debug test: %.4f", pi);
     _delay_ms(500);
     // eeprom_test();
     PORTB = PORTB ^ (1 << PB1);

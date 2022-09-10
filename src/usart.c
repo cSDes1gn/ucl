@@ -4,7 +4,12 @@
 #include <avr/interrupt.h>
 #include "usart.h"
 
-void usart_print(const char *line) {
+/**
+ * @brief Print a line of characters to USART channel
+ * 
+ * @param line character array to print
+ */
+void usart_println(const char *line) {
   for (int i = 0; i < strlen(line); i++) {
     usart_send_byte(line[i]);
   }
