@@ -10,36 +10,33 @@
 void eeprom_test(void) {
   uint8_t buffer = 0;
   eeprom_status_t result = EEPROM_SUCCESS;
-  result = eeprom_write_byte(0, 1);
-  if (result == EEPROM_FAILURE) {
-    usart_send_byte('W');
+  warning("======= EEPROM TEST =========");
+  for (int i = 0; i < EEPROM_MAX_ADDR; i++) {
+    result = eeprom_write_byte(i, (uint8_t)i);
+    if (result == EEPROM_FAILURE) {
+      error("eeprom write failed");
+    }
+    _delay_ms(20);
+    result = eeprom_read_byte(i, &buffer);
+    if (result == EEPROM_FAILURE) {
+      error("eeprom read failed");
+    }
+    info("EEPROM [%x]: %u", i, buffer);
+    _delay_ms(20);
   }
-  _delay_ms(200);
-  result = eeprom_read_byte(0, &buffer);
-  if (result == EEPROM_FAILURE) {
-    usart_send_byte('R');
-  }
-  if (buffer != 1) {
-    usart_send_byte('1');
-  }
-  usart_send_byte('\r');
-  usart_send_byte('\n');
-  _delay_ms(200);
+  warning("======= TEST COMPLETE =========");
 }
 
 int main(void){
   logger_set_level(LOG_TRACE);
   usart_init();
-  // eeprom_test();
-  // SCK of PORTB for outpu
   DDRB |= (1 << DDB1);
   for(;;){
-    const float pi = 3.1415926f;
-    info("Hello this is a test: %i", 1);
-    trace("debug test: %.4f", pi);
-    _delay_ms(500);
-    // eeprom_test();
-    PORTB = PORTB ^ (1 << PB1);
+    // when SCK ON do not pwr off
+    PORTB |= (1 << PB1);
+    eeprom_test();
+    PORTB &= ~(1 << PB1);
+    _delay_ms(5000);
   }
   return 0;
 }
