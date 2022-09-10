@@ -4,38 +4,39 @@
 #include <stdlib.h>
 
 #include "usart.h"
+#include "logger.h"
 #include "eeprom.h"
 
 void eeprom_test(void) {
   uint8_t buffer = 0;
-  char buf = 0;
   eeprom_status_t result = EEPROM_SUCCESS;
-  for (int i = 0; i <= 9; i++) {
-    result = eeprom_write_byte(i, (uint8_t)i);
-    if (result == EEPROM_FAILURE) {
-      usart_blocking_send('W');
-      continue;
-    }
-    _delay_ms(200);
-    result = eeprom_read_byte(i, &buffer);
-    if (result == EEPROM_FAILURE) {
-      usart_blocking_send('R');
-      continue;
-    }
-    usart_blocking_send(*itoa(buffer, &buf, 10));
-    usart_blocking_send('\r');
-    usart_blocking_send('\n');
-    _delay_ms(200);
+  result = eeprom_write_byte(0, 1);
+  if (result == EEPROM_FAILURE) {
+    usart_send_byte('W');
   }
+  _delay_ms(200);
+  result = eeprom_read_byte(0, &buffer);
+  if (result == EEPROM_FAILURE) {
+    usart_send_byte('R');
+  }
+  if (buffer != 1) {
+    usart_send_byte('1');
+  }
+  usart_send_byte('\r');
+  usart_send_byte('\n');
+  _delay_ms(200);
 }
 
 int main(void){
+  logger_set_level(LOG_TRACE);
   usart_init();
   // eeprom_test();
   // SCK of PORTB for outpu
   DDRB |= (1 << DDB1);
   for(;;){
-    eeprom_test();
+    info("Hello this is a test: %i, %f", 1, (float)0.0234);
+    _delay_ms(500);
+    // eeprom_test();
     PORTB = PORTB ^ (1 << PB1);
   }
   return 0;
