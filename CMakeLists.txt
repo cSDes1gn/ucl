@@ -90,6 +90,7 @@ add_executable(
   ${PROJECT_NAME}
   src/main.c
   src/usart.c
+  src/logger.c
   src/eeprom.c
 )
 include_directories(include)
