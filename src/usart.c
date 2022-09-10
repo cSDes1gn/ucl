@@ -1,19 +1,13 @@
 
 #include <avr/io.h>
+#include <string.h>
 #include <avr/interrupt.h>
 #include "usart.h"
 
-/**
- * @brief ISR for usart rx complete
- * 
- */
-ISR(USART0_RX_vect) {
-  cli();
-  unsigned char value;
-  // echo character back
-  value = UDR0;
-  UDR0 = value;
-  sei();
+void usart_print(const char *line) {
+  for (int i = 0; i < strlen(line); i++) {
+    usart_send_byte(line[i]);
+  }
 }
 
 void usart_init(void){
@@ -30,14 +24,14 @@ void usart_init(void){
   sei();
 }
 
-void usart_blocking_send(unsigned char value) {
+void usart_send_byte(unsigned char value) {
   // wait until buffer is ready to receive new data
   while((UCSR0A & (1 << UDRE0)) == 0);
   // write to USART data register TXD
   UDR0 = value;
 }
 
-unsigned char usart_poll() {
+unsigned char usart_poll_byte() {
   while((UCSR0A & ( 1 << RXC0)) == 0);
   // read from USART data register RXD
   return UDR0;
