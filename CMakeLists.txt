@@ -30,31 +30,40 @@ set(CMAKE_EXE_LINKER_FLAGS -mmcu=${MCU})
 
 # Pass defines to compiler
 add_definitions(
-    -DF_CPU=${F_CPU}
-    -DBAUD=${BAUD}
+  -DF_CPU=${F_CPU}
+  -DBAUD=${BAUD}
 )
+
+# floating point conversion for vsprintf
+add_link_options(
+  -u
+  vfprintf
+  -lprintf_flt
+  -lm
+)
+
 add_compile_options(
-    -mmcu=${MCU} # MCU
-    -std=gnu99 # C99 standard
-    -Os # optimize
-    -Wall # enable warnings
-    -Wno-main
-    -Wundef
-    -pedantic
-    -Wstrict-prototypes
-    -Werror
-    -Wfatal-errors
-    -Wl,--relax,--gc-sections
-    -g
-    -gdwarf-2
-    -funsigned-char # a few optimizations
-    -funsigned-bitfields
-    -fpack-struct
-    -fshort-enums
-    -ffunction-sections
-    -fdata-sections
-    -fno-split-wide-types
-    -fno-tree-scev-cprop
+  -mmcu=${MCU} # MCU
+  -std=gnu99 # C99 standard
+  -Os # optimize
+  -Wall # enable warnings
+  -Wno-main
+  -Wundef
+  -pedantic
+  -Wstrict-prototypes
+  -Werror
+  -Wfatal-errors
+  -Wl,--relax,--gc-sections
+  -g
+  -gdwarf-2
+  -funsigned-char # a few optimizations
+  -funsigned-bitfields
+  -fpack-struct
+  -fshort-enums
+  -ffunction-sections
+  -fdata-sections
+  -fno-split-wide-types
+  -fno-tree-scev-cprop
 )
 
 # find programs
