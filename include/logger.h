@@ -4,18 +4,6 @@
 
 #include <stdio.h>
 
-/**
- * @brief Standard logging struct
- * 
- */
-struct __std_log {
-  int line;
-  va_list *argp;
-  const char *fmt;
-  const char *repr;
-  const char *func;
-};
-
 // logging levels
 enum log_level {
   LOG_TRACE,

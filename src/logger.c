@@ -21,15 +21,6 @@ static char *_get_level_str(enum log_level level) {
   }
 }
 
-static void _out(const struct __std_log *stdl) {
-  char buffer[1000];
-  sprintf(buffer, "[%s]\t %s:%i ", stdl->repr, stdl->func, stdl->line);
-  usart_print(buffer);
-  vsprintf(buffer, stdl->fmt, *stdl->argp);
-  usart_print(buffer);
-  usart_print("\n\r");
-}
-
 /**
  * @brief Set the program log level
  * 
@@ -58,19 +49,18 @@ enum log_level logger_get_level(void) {
  * @param fmt log string formatter
  * @param ... variable arguments for string formatter
  */
-void logger_out(enum log_level level, const char* func, int line, const char* fmt, ...) {
+void logger_out(const enum log_level level, const char* func, const int line, const char* fmt, ...) {
+  char buffer[1000];
   va_list args;
-  va_start(args, fmt);
   // filter output by log level
   if (logger_get_level() > level) {
     return;
   }
-  struct __std_log stdl;
-  stdl.repr = _get_level_str(level);
-  stdl.argp = &args;
-  stdl.fmt = fmt;
-  stdl.func = func;
-  stdl.line = line;
-  _out(&stdl);
+  sprintf(buffer, "[%s]\t %s:%i ", _get_level_str(level), func, line);
+  va_start(args, fmt);
+  usart_println(buffer);
+  vsprintf(buffer, fmt, args);
   va_end(args);
+  usart_println(buffer);
+  usart_println("\n\r");
 }
