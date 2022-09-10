@@ -1,5 +1,11 @@
 # Documentation
 
+## Installations
+```bash
+brew tap osx-cross/avr
+brew install avr-gcc
+```
+
 ## Compile and Flash
 Using `avrdude` and `avr-gcc` utilities
 ```bash
