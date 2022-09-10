@@ -14,7 +14,8 @@
 #define BAUD_PRESCALE (uint16_t)( F_CPU / (16.0 * USART_BAUDRATE) - 0.5 )
 
 void usart_init(void);
-void usart_blocking_send(unsigned char value);
-unsigned char usart_poll(void);
+void usart_print(const char *line);
+void usart_send_byte(unsigned char value);
+unsigned char usart_poll_byte(void);
 
 #endif // 
