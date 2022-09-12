@@ -1,8 +1,8 @@
 {
-	"version": 4,
+    "version": 4,
     "env": {
-		"avr-core": "/usr/local/Cellar/avr-gcc@9/",
-		"avr-version":  "9.4.0"
+        "avr-core": "/opt/homebrew/Cellar/avr-gcc@9/",
+        "avr-version":  "9.4.0"
     },
     "configurations": [
         {
@@ -10,7 +10,7 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${avr-core}/${avr-version}/avr/**",
-				"${avr-core}/${avr-version}/"
+                "${avr-core}/${avr-version}/"
             ],
             "browse": {
                 "path": [
@@ -20,12 +20,12 @@
             },
             "defines": [
                 "__AVR_ATmega2560__",
-                // "__DOXYGEN__"
+                "__DOXYGEN__"
             ],
             "compilerPath": "${avr-core}/${avr-version}/bin/avr-gcc",
             "cStandard": "c99",
             "intelliSenseMode": "${default}",
             "configurationProvider": "ms-vscode.makefile-tools"
         }
-	]
+    ]
 }
