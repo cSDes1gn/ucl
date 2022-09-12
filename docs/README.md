@@ -3,7 +3,7 @@
 ## Installations
 ```bash
 brew tap osx-cross/avr
-brew install avr-gcc
+brew install avr-gcc avrdude
 ```
 
 ## Compile and Flash
