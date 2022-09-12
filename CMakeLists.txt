@@ -23,7 +23,27 @@ set(AVRDUDE_PROG_TYPE "wiring")
 # set serial usb device for flashing
 set(SERIAL_PORT "/dev/tty.usbserial-A10JTC54")
 # setup toolchain paths
-set(CGT_ROOT "/usr/local/bin")
+set(CGT_ROOT "/opt/homebrew/bin")
+
+# find avr toolchain programs
+find_program(AVR_CC NAMES avr-gcc PATHS ${CGT_ROOT} NO_DEFAULT_PATH)
+find_program(AVR_CXX NAMES avr-g++ PATHS ${CGT_ROOT} NO_DEFAULT_PATH)
+find_program(AVR_OBJCOPY NAMES avr-objcopy PATHS ${CGT_ROOT} NO_DEFAULT_PATH)
+find_program(AVR_STRIP NAMES avr-strip PATHS ${CGT_ROOT} NO_DEFAULT_PATH)
+find_program(AVRDUDE NAMES avrdude PATHS ${CGT_ROOT} NO_DEFAULT_PATH)
+
+set(CMAKE_ASM_COMPILER ${AVR_CC})
+set(CMAKE_C_COMPILER ${AVR_CC})
+set(CMAKE_CXX_COMPILER ${AVR_CXX})
+# global project name
+set(PROJECT_NAME "ucl")
+
+project(
+  ${PROJECT_NAME}
+  LANGUAGES CXX C
+  VERSION "1.0.0"
+  DESCRIPTION "Under-cabinet lighting firmware."
+)
 
 # mmcu MUST be passed to bot the compiler and linker, this handle the linker
 set(CMAKE_EXE_LINKER_FLAGS -mmcu=${MCU})
@@ -64,26 +84,6 @@ add_compile_options(
   -fdata-sections
   -fno-split-wide-types
   -fno-tree-scev-cprop
-)
-
-# find programs
-find_program(AVR_CC NAMES avr-gcc PATHS ${CGT_ROOT} NO_DEFAULT_PATH)
-find_program(AVR_CXX NAMES avr-g++ PATHS ${CGT_ROOT} NO_DEFAULT_PATH)
-find_program(AVR_OBJCOPY NAMES avr-objcopy PATHS ${CGT_ROOT} NO_DEFAULT_PATH)
-find_program(AVR_STRIP NAMES avr-strip PATHS ${CGT_ROOT} NO_DEFAULT_PATH)
-find_program(AVRDUDE NAMES avrdude PATHS ${CGT_ROOT} NO_DEFAULT_PATH)
-
-set(CMAKE_ASM_COMPILER ${AVR_CC})
-set(CMAKE_C_COMPILER ${AVR_CC})
-set(CMAKE_CXX_COMPILER ${AVR_CXX})
-# global project name
-set(PROJECT_NAME "ucl")
-
-project(
-  ${PROJECT_NAME}
-  LANGUAGES CXX C
-  VERSION "1.0.0"
-  DESCRIPTION "Under-cabinet lighting firmware."
 )
 
 # cmake build guard
