@@ -19,8 +19,8 @@
                 ]
             },
             "defines": [
-                "__AVR_ATmega2560__",
-                "__DOXYGEN__"
+                "__AVR_ATmega2560__"
+
             ],
             "compilerPath": "${avr-core}/${avr-version}/bin/avr-gcc",
             "cStandard": "c99",
