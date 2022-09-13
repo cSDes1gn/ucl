@@ -6,6 +6,7 @@
 #include "usart.h"
 #include "logger.h"
 #include "eeprom.h"
+#include "pwm.h"
 
 void eeprom_test(void) {
   uint8_t buffer = 0;
@@ -30,13 +31,13 @@ void eeprom_test(void) {
 int main(void){
   logger_set_level(LOG_TRACE);
   usart_init();
+  pwm_init();
+  pwm_wake();
   DDRB |= (1 << DDB1);
   for(;;){
     // when SCK ON do not pwr off
-    PORTB |= (1 << PB1);
-    eeprom_test();
-    PORTB &= ~(1 << PB1);
-    _delay_ms(5000);
+    PORTB = PORTB ^ (1 << PB1);
+    _delay_ms(1000);
   }
   return 0;
 }

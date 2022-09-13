@@ -21,7 +21,7 @@ set(BAUDRATE 115200)
 set(AVRDUDE_PROG_TYPE "wiring")
 
 # set serial usb device for flashing
-set(SERIAL_PORT "/dev/tty.usbserial-A10JTC54")
+set(SERIAL_PORT "/dev/tty.usbserial-AB0KEN4W")
 # setup toolchain paths
 set(CGT_ROOT "/opt/homebrew/bin")
 
@@ -98,6 +98,7 @@ message(STATUS "Configuring ucl source")
 add_executable(
   ${PROJECT_NAME}
   src/main.c
+  src/pwm.c
   src/usart.c
   src/logger.c
   src/eeprom.c
