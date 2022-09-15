@@ -28,15 +28,28 @@ void eeprom_test(void) {
   warning("======= TEST COMPLETE =========");
 }
 
+void pwm_sweep(void) {
+  info("========= PWM SWEEP ===========");
+  trace("waking pwm timer module");
+  pwm_wake();
+  PORTB |= 1 << PB1;
+  for (uint16_t i = 0; i <= 255; i++) {
+    _delay_ms(10);
+    pwm_set_duty((uint8_t)i);
+  }
+  PORTB &= ~(1 << PB1);
+  trace("powering down pwm timer module");
+  pwm_sleep();
+  info("========= PWM SWEEP COMPLETE ===========");
+}
+
 int main(void){
   logger_set_level(LOG_TRACE);
   usart_init();
   pwm_init();
-  pwm_wake();
   DDRB |= (1 << DDB1);
   for(;;){
-    // when SCK ON do not pwr off
-    PORTB = PORTB ^ (1 << PB1);
+    pwm_sweep();
     _delay_ms(1000);
   }
   return 0;
