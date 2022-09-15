@@ -32,7 +32,7 @@ void pwm_sweep(void) {
   info("========= PWM SWEEP ===========");
   trace("waking pwm timer module");
   pwm_wake();
-  PORTB |= 1 << PB1;
+  PORTB |= (1 << PB1);
   for (uint16_t i = 0; i <= 255; i++) {
     _delay_ms(10);
     pwm_set_duty((uint8_t)i);

@@ -27,7 +27,7 @@ pwm_status_t pwm_init(void) {
 
 void pwm_wake(void) {
   // wake timer 5
-  PRR1 &= ~(0 << PRTIM5);
+  PRR1 &= ~(1 << PRTIM5);
 }
 
 void pwm_sleep(void) {
