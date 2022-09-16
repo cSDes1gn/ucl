@@ -7,6 +7,15 @@ brew install avr-gcc avrdude
 ```
 
 ## Compile and Flash
+Using `CMake` toolchain:
+```bash
+mkdir build
+cd build
+cmake ..
+make -j
+make flash
+```
+
 Using `avrdude` and `avr-gcc` utilities
 ```bash
 # compile
