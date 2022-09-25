@@ -1,10 +1,9 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
+#include "encoder.h"
+#include "logger.h"
 
-#define RE_PK_MASK ((1 << PK5) | (1 << PK4) | (1 << PK3))
-// rotary encoder debounce upper threshold (ms)
-#define RE_DEBOUNCE_THRESH 10
 
 // All Rotary encoder signals will be handled by PCINT2
 // SW -> PK3 (PCINT19)
@@ -12,6 +11,7 @@
 // DT -> PK5 (PCINT21)
 
 static volatile uint8_t re_state = 0x0;
+static volatile enum encoder_event *event_buf[ENCODER_EVENT_BUF_LEN] = {};
 
 /**
  * @brief Read from rotary encoder every 30 ms (~33 Hz)
@@ -27,6 +27,16 @@ ISR(TIMER0_OVF_vect) {
   } else {
     info("press");
   }
+  sei();
+}
+
+/**
+ * @brief Wake encoder debounce timer interrupts to process encoder inputs
+ * 
+ */
+ISR(PCINT2_vect) {
+  cli();
+  encoder_wake();
   sei();
 }
 
@@ -69,7 +79,7 @@ ISR(TIMER0_OVF_vect) {
 //   sei();
 // }
 
-void re_init(void) {
+void encoder_init(void) {
   // set rotary encoder inputs
   DDRK &= ~((1 << PK5) | (1 << PK4) | (1 << PK3));
   // enable pullups
@@ -85,14 +95,20 @@ void re_init(void) {
   TCNT0 = 0x0;
   // sleep timer 0
   PRR0 |= (1 << PRTIM0);
+  // wake scan on PCINT23:16
+  PCICR |= (1 << PCIE2);
 }
 
-void re_enable(void) {
+void encoder_wake(void) {
   // push initial port k state
   re_state = PINK & 0x30;
-  info("Initial RE_STATE: 0x%x", re_state);
-  // enable scan on PCINT23:16
-  PCICR |= (1 << PCIE2);
   // wake debounce timer
   PRR0 &= ~(1 << PRTIM0);
+}
+
+void encoder_sleep(void) {
+  // disable timer interrupts
+  PRR0 |= (1 << PRTIM0);
+  // re-enable wake scan on PCINT23:16
+  PCICR |= (1 << PCIE2);
 }
