@@ -98,10 +98,11 @@ message(STATUS "Configuring ucl source")
 add_executable(
   ${PROJECT_NAME}
   src/main.c
-  src/pwm.c
-  src/usart.c
+  src/drivers/pwm.c
+  src/drivers/usart.c
   src/logger.c
-  src/eeprom.c
+  src/tests.c
+  src/drivers/eeprom.c
 )
 include_directories(include)
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME ${PROJECT_NAME}.elf)
