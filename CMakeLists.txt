@@ -48,21 +48,40 @@ project(
 # mmcu MUST be passed to bot the compiler and linker, this handle the linker
 set(CMAKE_EXE_LINKER_FLAGS -mmcu=${MCU})
 
-# Pass defines to compiler
-add_definitions(
+# cmake build guard
+if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
+  message(
+    FATAL_ERROR
+      "In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there."
+  )
+endif()
+
+message(STATUS "Configuring ucl source")
+add_executable(
+  ${PROJECT_NAME}
+  src/main.c
+  src/logger.c
+  src/tests.c
+  src/drivers/pwm.c
+  src/drivers/usart.c
+  src/drivers/eeprom.c
+  src/drivers/encoder.c
+)
+set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME ${PROJECT_NAME}.elf)
+target_include_directories(
+  ${PROJECT_NAME}
+  PRIVATE
+  "include"
+)
+target_compile_definitions(
+  ${PROJECT_NAME}
+  PRIVATE
   -DF_CPU=${F_CPU}
   -DBAUD=${BAUD}
 )
-
-# floating point conversion for vsprintf
-add_link_options(
-  -u
-  vfprintf
-  -lprintf_flt
-  -lm
-)
-
-add_compile_options(
+target_compile_options(
+  ${PROJECT_NAME}
+  PRIVATE
   -mmcu=${MCU} # MCU
   -std=gnu99 # C99 standard
   -Os # optimize
@@ -85,27 +104,14 @@ add_compile_options(
   -fno-split-wide-types
   -fno-tree-scev-cprop
 )
-
-# cmake build guard
-if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
-  message(
-    FATAL_ERROR
-      "In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there."
-  )
-endif()
-
-message(STATUS "Configuring ucl source")
-add_executable(
+target_link_options(
   ${PROJECT_NAME}
-  src/main.c
-  src/drivers/pwm.c
-  src/drivers/usart.c
-  src/logger.c
-  src/tests.c
-  src/drivers/eeprom.c
+  PRIVATE
+  -u
+  vfprintf
+  -lprintf_flt
+  -lm
 )
-include_directories(include)
-set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME ${PROJECT_NAME}.elf)
 
 message(STATUS "Adding custom targets")
 # Strip binary for upload
