@@ -5,79 +5,85 @@
 #include "logger.h"
 
 
-// All Rotary encoder signals will be handled by PCINT2
-// SW -> PK3 (PCINT19)
-// CLK -> PK4 (PCINT20)
-// DT -> PK5 (PCINT21)
 
-static volatile uint8_t re_state = 0x0;
-static volatile enum encoder_event *event_buf[ENCODER_EVENT_BUF_LEN] = {};
 
 /**
- * @brief Read from rotary encoder every 30 ms (~33 Hz)
- * Phase leads by ~ 60ms for fast turns by Nyquists theory we should sample at minimum twice the frequency
+ * @brief All Rotary encoder signals will be handled by PCINT2
+ *  SW -> PK3 (PCINT19)
+ *  DT -> PK4 (PCINT20)
+ *  CLK -> PK5 (PCINT21)
+ */
+
+/**
+ * @brief Implement table encoding method.　Below are the table state encodings:
+ * 
+ * INVALID = 0
+ * CW = 1
+ * CCW = 2
+ * 
+ * [PCLK PDT CLK DT | STATE | CODE ]
+ *  0 0 0 0 | PASSIVE | 0
+ *  0 0 0 1 | CCW     | 2
+ *  0 0 1 0 | CW      | 1
+ *  0 0 1 1 | INVALID | 0 
+ *  0 1 0 0 | CW      | 1
+ *  0 1 0 1 | PASSIVE | 0
+ *  0 1 1 0 | INVALID | 0
+ *  0 1 1 1 | CCW     | 2
+ *  1 0 0 0 | CCW     | 2
+ *  1 0 0 1 | INVALID | 0
+ *  1 0 1 0 | PASSIVE | 0
+ *  1 0 1 1 | CW      | 1
+ *  1 1 0 0 | INVALID | 0
+ *  1 1 0 1 | CW      | 1
+ *  1 1 1 0 | CCW     | 2
+ *  1 1 1 1 | PASSIVE | 0
+ */
+static uint8_t encoder_map[] = { 0, 2, 1, 0, 1, 0, 0, 2, 2, 0, 0, 1, 0, 1, 2, 0 };
+
+static volatile uint8_t pre_state = 0x0;
+// static volatile enum encoder_event *event_buf[ENCODER_EVENT_BUF_LEN] = {};
+
+/**
+ * @brief Hardware debouncing still required!
  * 
  */
-ISR(TIMER0_OVF_vect) {
+ISR(PCINT2_vect) {
   cli();
-  // uint8_t curr_re_state = (PINK & 0x30);
-  // sw read
   if (PINK & (1 << PK3)) {
     info("release");
   } else {
     info("press");
   }
+  uint8_t re_state = PINK & ((1 << PK4) | (1 << PK5));
+  // translate for concat
+  re_state >>= 4;
+  // filter for stable state
+  info("=============================");
+  info("re_state: %x", re_state);
+  info("pre_state: %x", pre_state);
+  // concat for idx
+  uint8_t idx = ((pre_state << 2) | re_state) & 0x0f;
+  info("idx: %x", idx);
+  uint8_t state = encoder_map[idx];
+  info("state: %u", state);
+  switch (state) {
+    case 1:
+      info("CW");
+      // save previous state
+      pre_state = re_state;
+      break;
+    case 2:
+      info("CCW");
+      // save previous state
+      pre_state = re_state;
+      break;
+    default:
+      info("INVALID");
+      break;
+  }
   sei();
 }
-
-/**
- * @brief Wake encoder debounce timer interrupts to process encoder inputs
- * 
- */
-ISR(PCINT2_vect) {
-  cli();
-  encoder_wake();
-  sei();
-}
-
-// ISR(PCINT2_vect) {
-//   cli();
-//   // perform debounce verification
-//   // clk dt read
-//   uint8_t curr_re_state = (PINK & 0x30);
-//   if (db_timer) {
-//     if (db_timer > TCNT0) {
-//       if ((db_timer - TCNT0) < RE_DEBOUNCE_THRESH) {
-//         goto ret;
-//       }
-//     } else {
-//       if ((TCNT0 - db_timer) < RE_DEBOUNCE_THRESH) {
-//         goto ret;
-//       }
-//     }
-//   }
-
-//   if (((re_state == 0x0) && (curr_re_state == 0x10)) || ((re_state == 0x30) && (curr_re_state== 0x20))) {
-//     info("CW");
-//   } else if (((re_state == 0x0) && (curr_re_state == 0x20)) || ((re_state == 0x30) && (curr_re_state== 0x10))) {
-//     info("CCW");
-//   }
-
-//   // sw read
-//   // if (PINK & (1 << PK3)) {
-//   //   info("release");
-//   // } else {
-//   //   info("press");
-//   // }
-// ret:
-//   if ( curr_re_state == 0x00) {
-//     re_state = 0x00;
-//   } else if (curr_re_state == 0x30) {
-//     re_state = 0x30;
-//   }
-//   db_timer = TCNT0;
-//   sei();
-// }
 
 void encoder_init(void) {
   // set rotary encoder inputs
@@ -100,8 +106,6 @@ void encoder_init(void) {
 }
 
 void encoder_wake(void) {
-  // push initial port k state
-  re_state = PINK & 0x30;
   // wake debounce timer
   PRR0 &= ~(1 << PRTIM0);
 }

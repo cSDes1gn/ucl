@@ -5,6 +5,7 @@
 #include "usart.h"
 #include "logger.h"
 #include "tests.h"
+#include "encoder.h"
 
 void spinlock(void) {
   while (1) {
@@ -15,10 +16,13 @@ void spinlock(void) {
 int main(void){
   logger_set_level(LOG_TRACE);
   usart_init();
+  encoder_init();
+  encoder_wake();
   sei();
   // test_run("EEPROM", test_eeprom);
-  test_run("PWM", test_pwm);
-  info("Task complete, entering spinlock.");
+  // test_run("PWM", test_pwm);
+  // info("Task complete, entering spinlock.");
+
   spinlock();
   return 0;
 }
