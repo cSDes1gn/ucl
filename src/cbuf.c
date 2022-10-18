@@ -15,8 +15,10 @@
 static void inc_ptr(cbuf_t *cbuffer) {
   assert(cbuffer);
   // if the buffer is full increment tail and check reset condition for tail
-  if (cbuffer->full && (++(cbuffer->tail) == cbuffer->max)) {
-    cbuffer->tail = 0;
+  if (cbuffer->full) {
+    if (++(cbuffer->tail) == cbuffer->max) {
+      cbuffer->tail = 0;
+    }
   }
   // increment head and check reset condition for head
   if (++(cbuffer->head) == cbuffer->max) {
@@ -68,7 +70,7 @@ cbuf_err_t cbuf_get(cbuf_t *cbuffer, uint8_t *data) {
 
 uint8_t cbuf_empty(cbuf_t *cbuffer) {
   assert(cbuffer);
-  return !cbuffer->full && !(cbuffer->tail == cbuffer->head);
+  return !cbuffer->full && (cbuffer->tail == cbuffer->head);
 }
 
 size_t cbuf_size(cbuf_t *cbuffer) {
