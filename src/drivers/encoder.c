@@ -68,7 +68,7 @@ static enum encoder_event encoder_map[] = {
 ISR(PCINT2_vect) {
   cli();
   if (!(PINK & (1 << PK3))) {
-    info("PUSH");
+    trace("PUSH");
     cbuf_put(&cbuffer, ENCODER_SW);
   }
   uint8_t re_state = PINK & ((1 << PK4) | (1 << PK5));
@@ -78,11 +78,11 @@ ISR(PCINT2_vect) {
   enum encoder_event state = encoder_map[idx];
   switch (state) {
     case ENCODER_CW:
-      info("CW");
+      trace("CW");
       cbuf_put(&cbuffer, ENCODER_CW);
       break;
     case ENCODER_CCW:
-      info("CCW");
+      trace("CCW");
       cbuf_put(&cbuffer, ENCODER_CCW);
       break;
     case ENCODER_NULL:
@@ -95,16 +95,6 @@ ISR(PCINT2_vect) {
   sei();
 }
 
-enum encoder_event encoder_next_event(void) {
-  enum encoder_event event;
-  cbuf_err_t err = 0;
-  err = cbuf_get(&cbuffer, (uint8_t *)&event);
-  if (err == CBUF_EMPTY) {
-    event = ENCODER_NULL;
-  }
-  return event;
-}
-
 void encoder_init(void) {
   // set rotary encoder inputs
   DDRK &= ~((1 << PK5) | (1 << PK4) | (1 << PK3));
@@ -114,7 +104,21 @@ void encoder_init(void) {
   PCMSK2 |= (1 << PCINT21) | (1 << PCINT20) | (1 << PCINT19);
   // wake scan on PCINT23:16
   PCICR |= (1 << PCIE2);
-
   // setup event circular buffer
   cbuffer = cbuf_init((uint8_t *)events, ENCODER_EVENT_BUF_LEN);
+  trace("encoder driver init success.");
 }
+
+void encoder_clear_events(void) {
+  cbuf_reset(&cbuffer);
+  trace("reset encoder event queue");
+}
+
+enum encoder_event encoder_next_event(void) {
+  enum encoder_event event;
+  if (cbuf_get(&cbuffer, (uint8_t *)&event) == CBUF_EMPTY) {
+    event = ENCODER_NULL;
+  }
+  return event;
+}
+

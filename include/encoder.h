@@ -12,7 +12,7 @@
 #ifndef __ENCODER_H__
 #define __ENCODER_H__
 
-#define ENCODER_EVENT_BUF_LEN 100
+#define ENCODER_EVENT_BUF_LEN 25 
 
 enum encoder_event {
   ENCODER_NULL,
@@ -21,7 +21,8 @@ enum encoder_event {
   ENCODER_SW,
 };
 
-enum encoder_event encoder_next_event(void);
 void encoder_init(void);
+void encoder_clear_events(void);
+enum encoder_event encoder_next_event(void);
 
 #endif // __ENCODER_H__
