@@ -110,15 +110,19 @@ void encoder_init(void) {
 }
 
 void encoder_clear_events(void) {
+  cli();
   cbuf_reset(&cbuffer);
+  sei();
   trace("reset encoder event queue");
 }
 
 enum encoder_event encoder_next_event(void) {
   enum encoder_event event;
+  cli();
   if (cbuf_get(&cbuffer, (uint8_t *)&event) == CBUF_EMPTY) {
     event = ENCODER_NULL;
   }
+  sei();
   return event;
 }
 
