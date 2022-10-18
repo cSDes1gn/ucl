@@ -1,11 +1,9 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
+#include "cbuf.h"
 #include "encoder.h"
 #include "logger.h"
-
-
-
 
 /**
  * @brief All Rotary encoder signals will be handled by PCINT2
@@ -41,25 +39,26 @@
  */
 
 static volatile uint8_t pre_state = 0;
-// static volatile enum encoder_event *event_buf[ENCODER_EVENT_BUF_LEN] = {};
+static volatile enum encoder_event events[ENCODER_EVENT_BUF_LEN];
+static cbuf_t cbuffer;
 
 static enum encoder_event encoder_map[] = { 
-  ENCODER_INVALID,
+  ENCODER_NULL,
   ENCODER_CCW,
   ENCODER_CW,
-  ENCODER_INVALID,
+  ENCODER_NULL,
   ENCODER_CW,
-  ENCODER_INVALID,
-  ENCODER_INVALID,
+  ENCODER_NULL,
+  ENCODER_NULL,
   ENCODER_CCW,
   ENCODER_CCW,
-  ENCODER_INVALID,
-  ENCODER_INVALID,
+  ENCODER_NULL,
+  ENCODER_NULL,
   ENCODER_CW,
-  ENCODER_INVALID,
+  ENCODER_NULL,
   ENCODER_CW,
   ENCODER_CCW,
-  ENCODER_INVALID
+  ENCODER_NULL
 };
 
 /**
@@ -68,10 +67,9 @@ static enum encoder_event encoder_map[] = {
  */
 ISR(PCINT2_vect) {
   cli();
-  if (PINK & (1 << PK3)) {
-    info("release");
-  } else {
-    info("press");
+  if (!(PINK & (1 << PK3))) {
+    info("PUSH");
+    cbuf_put(&cbuffer, ENCODER_SW);
   }
   uint8_t re_state = PINK & ((1 << PK4) | (1 << PK5));
   // translate for concat
@@ -81,19 +79,30 @@ ISR(PCINT2_vect) {
   switch (state) {
     case ENCODER_CW:
       info("CW");
+      cbuf_put(&cbuffer, ENCODER_CW);
       break;
     case ENCODER_CCW:
       info("CCW");
+      cbuf_put(&cbuffer, ENCODER_CCW);
       break;
-    case ENCODER_INVALID:
+    case ENCODER_NULL:
       break;
     default:
-      info("INVALID");
       break;
   }
   // save previous state
   pre_state = re_state;
   sei();
+}
+
+enum encoder_event encoder_next_event(void) {
+  enum encoder_event event;
+  cbuf_err_t err = 0;
+  err = cbuf_get(&cbuffer, (uint8_t *)&event);
+  if (err == CBUF_EMPTY) {
+    event = ENCODER_NULL;
+  }
+  return event;
 }
 
 void encoder_init(void) {
@@ -105,4 +114,7 @@ void encoder_init(void) {
   PCMSK2 |= (1 << PCINT21) | (1 << PCINT20) | (1 << PCINT19);
   // wake scan on PCINT23:16
   PCICR |= (1 << PCIE2);
+
+  // setup event circular buffer
+  cbuffer = cbuf_init((uint8_t *)events, ENCODER_EVENT_BUF_LEN);
 }
