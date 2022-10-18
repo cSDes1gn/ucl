@@ -39,13 +39,31 @@
  *  1 1 1 0 | CCW     | 2
  *  1 1 1 1 | PASSIVE | 0
  */
-static uint8_t encoder_map[] = { 0, 2, 1, 0, 1, 0, 0, 2, 2, 0, 0, 1, 0, 1, 2, 0 };
 
-static volatile uint8_t pre_state = 0x0;
+static volatile uint8_t pre_state = 0;
 // static volatile enum encoder_event *event_buf[ENCODER_EVENT_BUF_LEN] = {};
 
+static enum encoder_event encoder_map[] = { 
+  ENCODER_INVALID,
+  ENCODER_CCW,
+  ENCODER_CW,
+  ENCODER_INVALID,
+  ENCODER_CW,
+  ENCODER_INVALID,
+  ENCODER_INVALID,
+  ENCODER_CCW,
+  ENCODER_CCW,
+  ENCODER_INVALID,
+  ENCODER_INVALID,
+  ENCODER_CW,
+  ENCODER_INVALID,
+  ENCODER_CW,
+  ENCODER_CCW,
+  ENCODER_INVALID
+};
+
 /**
- * @brief Hardware debouncing still required!
+ * @brief 
  * 
  */
 ISR(PCINT2_vect) {
@@ -58,30 +76,23 @@ ISR(PCINT2_vect) {
   uint8_t re_state = PINK & ((1 << PK4) | (1 << PK5));
   // translate for concat
   re_state >>= 4;
-  // filter for stable state
-  info("=============================");
-  info("re_state: %x", re_state);
-  info("pre_state: %x", pre_state);
-  // concat for idx
   uint8_t idx = ((pre_state << 2) | re_state) & 0x0f;
-  info("idx: %x", idx);
-  uint8_t state = encoder_map[idx];
-  info("state: %u", state);
+  enum encoder_event state = encoder_map[idx];
   switch (state) {
-    case 1:
+    case ENCODER_CW:
       info("CW");
-      // save previous state
-      pre_state = re_state;
       break;
-    case 2:
+    case ENCODER_CCW:
       info("CCW");
-      // save previous state
-      pre_state = re_state;
+      break;
+    case ENCODER_INVALID:
       break;
     default:
       info("INVALID");
       break;
   }
+  // save previous state
+  pre_state = re_state;
   sei();
 }
 
@@ -92,27 +103,6 @@ void encoder_init(void) {
   PORTK |= (1 << PK5) | (1 << PK4) | (1 << PK3);
   // setup interrupt mask for PCINT2 vector
   PCMSK2 |= (1 << PCINT21) | (1 << PCINT20) | (1 << PCINT19);
-  // configure a debounce timer (normal operation with output compare and wavegen disabled
-  TCCR0A &= ~((1 << COM0A1) | (1 << COM0A0) | (1 << COM0B1) | (1 << COM0B0) | (1 << WGM01) | (1 << WGM00));
-  TCCR0B &= ~((1 << WGM02));
-  // configure timer with a 1024 prescaler (15.625KHz @ 16 MHz) and overflow interrupts
-  TCCR0B |= ((1 << CS02) | (1 << CS00));
-  TIMSK0 |= (1 << TOIE0);
-  TCNT0 = 0x0;
-  // sleep timer 0
-  PRR0 |= (1 << PRTIM0);
   // wake scan on PCINT23:16
-  PCICR |= (1 << PCIE2);
-}
-
-void encoder_wake(void) {
-  // wake debounce timer
-  PRR0 &= ~(1 << PRTIM0);
-}
-
-void encoder_sleep(void) {
-  // disable timer interrupts
-  PRR0 |= (1 << PRTIM0);
-  // re-enable wake scan on PCINT23:16
   PCICR |= (1 << PCIE2);
 }
