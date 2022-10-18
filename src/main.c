@@ -1,6 +1,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/cpufunc.h>
+#include <util/delay.h>
 
 #include "usart.h"
 #include "logger.h"
@@ -17,11 +18,10 @@ int main(void){
   logger_set_level(LOG_TRACE);
   usart_init();
   encoder_init();
-  encoder_wake();
   sei();
   // test_run("EEPROM", test_eeprom);
   // test_run("PWM", test_pwm);
-  // info("Task complete, entering spinlock.");
+  info("Task complete, entering spinlock.");
 
   spinlock();
   return 0;
