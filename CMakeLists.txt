@@ -61,6 +61,7 @@ add_executable(
   ${PROJECT_NAME}
   src/main.c
   src/logger.c
+  src/cbuf.c
   src/tests.c
   src/drivers/pwm.c
   src/drivers/usart.c
