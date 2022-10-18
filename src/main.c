@@ -21,8 +21,11 @@ int main(void){
   sei();
   // test_run("EEPROM", test_eeprom);
   // test_run("PWM", test_pwm);
+  for (;;) {
+    _delay_ms(100);
+    info("Encoder Event: %u", encoder_next_event());
+  }
   info("Task complete, entering spinlock.");
-
   spinlock();
   return 0;
 }
