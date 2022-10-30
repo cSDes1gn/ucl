@@ -1,4 +1,5 @@
 ---
 AllowShortLoopsOnASingleLine: true
+IndentCaseLabels: true
 UseTab: Never
 UseCRLF: false
