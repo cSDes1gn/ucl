@@ -15,8 +15,23 @@ on:
       - master
 
 jobs:
+  clang-fmt:
+    name: check for clang formatting violations
+    runs-on: ubuntu-latest
+      steps:
+      - name: checkout source
+        uses: actions/checkout@v3 
+      - name: update and install apt dependancies
+        run: |
+          sudo apt update -y
+          sudo apt install -y clang-format
+        env:
+          DEBIAN_FRONTEND: noninteractive
+      - name: run clang formatter
+        run: find src include -iname *.c -o -iname *.h | xargs clang-format -n -Werror
   build:
     name: build & upload firmware
+    needs: clang-fmt
     runs-on: ubuntu-latest
     steps:
       - name: checkout source
