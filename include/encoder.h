@@ -1,18 +1,18 @@
 /**
  * @file encoder.h
  * @author ztnel (christian911@sympatico.ca)
- * @brief 
+ * @brief
  * @version 0.1
  * @date 2022-10
- * 
+ *
  * @copyright Copyright © 2022 Christian Sargusingh
- * 
+ *
  */
 
 #ifndef __ENCODER_H__
 #define __ENCODER_H__
 
-#define ENCODER_EVENT_BUF_LEN 25 
+#define ENCODER_EVENT_BUF_LEN 25
 
 enum encoder_event {
   ENCODER_NULL,

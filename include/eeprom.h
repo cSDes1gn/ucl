@@ -13,4 +13,4 @@ typedef int eeprom_status_t;
 eeprom_status_t eeprom_read_byte(uint16_t addr, uint8_t *data);
 eeprom_status_t eeprom_write_byte(uint16_t addr, uint8_t data);
 
-#endif // __EEPROM_H__ 
+#endif // __EEPROM_H__

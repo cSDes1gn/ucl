@@ -4,9 +4,9 @@
  * @brief A lightweight circular buffer API
  * @version 0.1
  * @date 2022-10
- * 
+ *
  * @copyright Copyright © 2022 Christian Sargusingh
- * 
+ *
  */
 
 #ifndef __CBUF_H__
@@ -20,13 +20,12 @@ typedef int cbuf_err_t;
 #define CBUF_SUCCESS (cbuf_err_t)0
 #define CBUF_EMPTY (cbuf_err_t)1
 
-
 typedef struct cbuf_t {
-	uint8_t *buffer; // buffer data
-	uint8_t full;	 // full state boolean (saves a buffer index for checking wrap condition)
-	size_t head;	 // head position idx
-	size_t tail; 	 // tail position idx
-	size_t max;		 // maximum buffer size (bytes)
+  uint8_t *buffer; // buffer data
+  uint8_t full;    // full state boolean (saves index for wrap condition)
+  size_t head;     // head position idx
+  size_t tail;     // tail position idx
+  size_t max;      // maximum buffer size (bytes)
 } cbuf_t;
 
 cbuf_t cbuf_init(uint8_t *, size_t size);

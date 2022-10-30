@@ -4,13 +4,14 @@
  * @brief A lightweight circular buffer API
  * @version 0.1
  * @date 2022-10
- * 
+ *
  * @copyright Copyright © 2022 Christian Sargusingh
- * 
+ *
  */
 
-#include <assert.h>
 #include "cbuf.h"
+
+#include <assert.h>
 
 static void inc_ptr(cbuf_t *cbuffer) {
   assert(cbuffer);
@@ -60,7 +61,7 @@ void cbuf_put(cbuf_t *cbuffer, uint8_t data) {
 
 cbuf_err_t cbuf_get(cbuf_t *cbuffer, uint8_t *data) {
   assert(cbuffer && cbuffer->buffer && data);
-  if (cbuf_empty(cbuffer)){
+  if (cbuf_empty(cbuffer)) {
     return CBUF_EMPTY;
   }
   *data = cbuffer->buffer[cbuffer->tail];

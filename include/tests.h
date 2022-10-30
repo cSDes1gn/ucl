@@ -4,9 +4,9 @@
  * @brief test wrapper definitions
  * @version 0.1
  * @date 2022-09
- * 
+ *
  * @copyright Copyright © 2022 Christian Sargusingh
- * 
+ *
  */
 
 typedef int test_status_t;

@@ -1,11 +1,12 @@
 
-#include <avr/io.h>
-#include <avr/cpufunc.h>
 #include "pwm.h"
 
+#include <avr/cpufunc.h>
+#include <avr/io.h>
+
 /**
- * @brief Configure non-inverting PWM waveform generation for high resolution pwm control on PL3 (OC5A)
- * 16.7.4 Phase Correct PWM Mode.
+ * @brief Configure non-inverting PWM waveform generation for high resolution
+ * pwm control on PL3 (OC5A) 16.7.4 Phase Correct PWM Mode.
  */
 pwm_status_t pwm_init(void) {
   // non-inverting pwm mode
