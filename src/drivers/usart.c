@@ -10,7 +10,7 @@
  * @param line character array to print
  */
 void usart_println(const char *line) {
-  for (int i = 0; i < strlen(line); i++) {
+  for (size_t i = 0; i < strlen(line); i++) {
     usart_send_byte(line[i]);
   }
 }

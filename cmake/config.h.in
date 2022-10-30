@@ -1,0 +1,9 @@
+#ifndef __CONFIG_H__
+#define __CONFIG_H__
+
+// clang-format off
+#define ucl_VERSION_MAJOR @ucl_VERSION_MAJOR@
+#define ucl_VERSION_MINOR @ucl_VERSION_MINOR@
+// clang-format on
+
+#endif // __CONFIG_H__

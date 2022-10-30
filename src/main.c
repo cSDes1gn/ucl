@@ -1,7 +1,6 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/cpufunc.h>
-#include <util/delay.h>
 
 #include "usart.h"
 #include "logger.h"
@@ -22,7 +21,6 @@ int main(void){
   // test_run("EEPROM", test_eeprom);
   // test_run("PWM", test_pwm);
   for (;;) {
-    _delay_ms(100);
     info("Encoder Event: %u", encoder_next_event());
   }
   info("Task complete, entering spinlock.");
