@@ -1,0 +1,4 @@
+---
+AllowShortLoopsOnASingleLine: true
+UseTab: Never
+UseCRLF: false
