@@ -1,10 +1,9 @@
 
-#include <avr/io.h>
-#include "eeprom.h"
-#include "pwm.h"
-#include "logger.h"
 #include "tests.h"
-
+#include "eeprom.h"
+#include "logger.h"
+#include "pwm.h"
+#include <avr/io.h>
 
 void test_run(char *name, test_func test) {
   DDRB |= (1 << DDB1);

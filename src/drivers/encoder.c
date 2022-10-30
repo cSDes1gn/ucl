@@ -1,8 +1,9 @@
-#include <avr/io.h>
+#include "encoder.h"
+
 #include <avr/interrupt.h>
+#include <avr/io.h>
 
 #include "cbuf.h"
-#include "encoder.h"
 #include "logger.h"
 
 /**
@@ -14,16 +15,16 @@
 
 /**
  * @brief Implement table encoding method.　Below are the table state encodings:
- * 
+ *
  * INVALID = 0
  * CW = 1
  * CCW = 2
- * 
+ *
  * [PCLK PDT CLK DT | STATE | CODE ]
  *  0 0 0 0 | PASSIVE | 0
  *  0 0 0 1 | CCW     | 2
  *  0 0 1 0 | CW      | 1
- *  0 0 1 1 | INVALID | 0 
+ *  0 0 1 1 | INVALID | 0
  *  0 1 0 0 | CW      | 1
  *  0 1 0 1 | PASSIVE | 0
  *  0 1 1 0 | INVALID | 0
@@ -42,28 +43,15 @@ static volatile uint8_t pre_state = 0;
 static volatile enum encoder_event events[ENCODER_EVENT_BUF_LEN];
 static cbuf_t cbuffer;
 
-static enum encoder_event encoder_map[] = { 
-  ENCODER_NULL,
-  ENCODER_CCW,
-  ENCODER_CW,
-  ENCODER_NULL,
-  ENCODER_CW,
-  ENCODER_NULL,
-  ENCODER_NULL,
-  ENCODER_CCW,
-  ENCODER_CCW,
-  ENCODER_NULL,
-  ENCODER_NULL,
-  ENCODER_CW,
-  ENCODER_NULL,
-  ENCODER_CW,
-  ENCODER_CCW,
-  ENCODER_NULL
-};
+static enum encoder_event encoder_map[] = {
+    ENCODER_NULL, ENCODER_CCW,  ENCODER_CW,   ENCODER_NULL,
+    ENCODER_CW,   ENCODER_NULL, ENCODER_NULL, ENCODER_CCW,
+    ENCODER_CCW,  ENCODER_NULL, ENCODER_NULL, ENCODER_CW,
+    ENCODER_NULL, ENCODER_CW,   ENCODER_CCW,  ENCODER_NULL};
 
 /**
- * @brief 
- * 
+ * @brief
+ *
  */
 ISR(PCINT2_vect) {
   cli();
@@ -125,4 +113,3 @@ enum encoder_event encoder_next_event(void) {
   sei();
   return event;
 }
-

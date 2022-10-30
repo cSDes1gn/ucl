@@ -1,11 +1,11 @@
-#include <avr/io.h>
-#include <avr/interrupt.h>
 #include <avr/cpufunc.h>
+#include <avr/interrupt.h>
+#include <avr/io.h>
 
-#include "usart.h"
+#include "encoder.h"
 #include "logger.h"
 #include "tests.h"
-#include "encoder.h"
+#include "usart.h"
 
 void spinlock(void) {
   while (1) {
@@ -13,7 +13,7 @@ void spinlock(void) {
   }
 }
 
-int main(void){
+int main(void) {
   logger_set_level(LOG_TRACE);
   usart_init();
   encoder_init();

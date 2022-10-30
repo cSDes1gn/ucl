@@ -1,6 +1,6 @@
-#####
+# ####
 # CMake Toolchain for baremetal avr-gcc
-#####
+# ####
 
 set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_SYSTEM_PROCESSOR avr)
@@ -11,7 +11,7 @@ set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
 set(OBJECT_GEN_FLAGS "-O0 -Wno-unused-parameter -Wpedantic -fno-builtin -Wall -Wextra -fstack-usage -ffunction-sections -fdata-sections -fomit-frame-pointer")
 
-set(CMAKE_C_FLAGS   "${OBJECT_GEN_FLAGS}" CACHE INTERNAL "C Compiler options")
+set(CMAKE_C_FLAGS "${OBJECT_GEN_FLAGS}" CACHE INTERNAL "C Compiler options")
 set(CMAKE_CXX_FLAGS "${OBJECT_GEN_FLAGS}" CACHE INTERNAL "C++ Compiler options")
 set(CMAKE_ASM_FLAGS "${OBJECT_GEN_FLAGS} -x assembler-with-cpp " CACHE INTERNAL "ASM Compiler options")
 
@@ -31,6 +31,7 @@ set(CMAKE_EXE_LINKER_FLAGS_RELEASE "-flto" CACHE INTERNAL "Linker options for re
 find_program(AVR_CC NAMES avr-gcc REQUIRED)
 find_program(AVR_CXX NAMES avr-g++ REQUIRED)
 find_program(AVR_OBJCOPY NAMES avr-objcopy REQUIRED)
+find_program(AVR_OBJDUMP NAMES avr-objdump REQUIRED)
 find_program(AVR_STRIP NAMES avr-strip REQUIRED)
 find_program(AVR_SIZE NAMES avr-size REQUIRED)
 find_program(AVRDUDE NAMES avrdude REQUIRED)
