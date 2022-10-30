@@ -4,6 +4,8 @@
 // clang-format off
 #define ucl_VERSION_MAJOR @ucl_VERSION_MAJOR@
 #define ucl_VERSION_MINOR @ucl_VERSION_MINOR@
+
+#define F_CPU @F_CPU@
 // clang-format on
 
 #endif // __CONFIG_H__
