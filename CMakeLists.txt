@@ -16,7 +16,7 @@ endif()
 # set default build type if none specified
 if(NOT CMAKE_BUILD_TYPE)
   message(STATUS "No build type was set. Setting build type to 'Release'")
-  set(CMAKE_BUILD_TYPE "Release" CACHE STRING STRING "Choose cmake build type: Debug Release" FORCE)
+  set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose cmake build type: Debug Release" FORCE)
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release")
 endif()
 
