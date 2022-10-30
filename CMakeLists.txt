@@ -89,7 +89,7 @@ add_custom_target(strip ALL ${AVR_STRIP} ${PROJECT_NAME}.elf DEPENDS ${PROJECT_N
 # Transform binary into hex file, we ignore the eeprom segments in the step
 add_custom_target(hex ALL ${AVR_OBJCOPY} -R .eeprom -O ihex ${PROJECT_NAME}.elf ${PROJECT_NAME}.hex DEPENDS strip)
 # target for firmware size details
-add_custom_target(${PROJECT_NAME}-size ALL ${AVR_SIZE} ${PROJECT_NAME}.elf DEPENDS ${PROJECT_NAME})
+add_custom_target(size ALL ${AVR_SIZE} ${PROJECT_NAME}.elf DEPENDS ${PROJECT_NAME})
 # Upload the firmware with avrdude
 add_custom_target(flash ${AVRDUDE} -c ${AVRDUDE_PROG_TYPE} -p${MCU} -P${SERIAL_PORT} -b${BAUDRATE} -D -Uflash:w:${PROJECT_NAME}.hex:i DEPENDS hex)
 # Burn fuses
