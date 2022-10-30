@@ -16,7 +16,7 @@ on:
 
 jobs:
   clang-fmt:
-    name: check for clang formatting violations
+    name: static analysis
     runs-on: ubuntu-latest
     steps:
     - name: checkout source
@@ -30,7 +30,7 @@ jobs:
     - name: run clang formatter
       run: find src include -iname *.c -o -iname *.h | xargs clang-format -n -Werror
   build:
-    name: build & upload firmware
+    name: build firmware
     needs: clang-fmt
     runs-on: ubuntu-latest
     steps:
