@@ -39,7 +39,7 @@ jobs:
       - name: update and install apt dependancies
         run: |
           sudo apt update -y
-          sudo apt install -y gcc-avr avrdude
+          sudo apt install -y gcc-avr avrdude avr-libc
         env:
           DEBIAN_FRONTEND: noninteractive
       - name: setup cmake
