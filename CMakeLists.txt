@@ -41,6 +41,7 @@ add_executable(
   src/drivers/usart.c
   src/drivers/eeprom.c
   src/drivers/encoder.c
+  src/drivers/i2c.c
 )
 
 # AVR Fuses
