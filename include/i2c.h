@@ -13,6 +13,7 @@
 #define __I2C_H__
 
 #include <stdint.h>
+#include <stdlib.h>
 
 typedef int i2c_status_t;
 
@@ -21,17 +22,28 @@ typedef int i2c_status_t;
 #define I2C_TIMEOUT (i2c_status_t)2
 
 enum I2CPrescaler {
-  PRESCALER_1 = 1,
-  PRESCALER_4 = 4,
-  PRESCALER_16 = 16,
-  PRESCALER_64 = 64
+  I2C_PRESCALE_1 = 1,
+  I2C_PRESCALE_4 = 4,
+  I2C_PRESCALE_16 = 16,
+  I2C_PRESCALE_64 = 64,
 };
 
-void i2c_wake(void);
-i2c_status_t i2c_init(uint32_t f_i2c, enum I2CPrescaler prescaler);
-void i2c_start(uint8_t i2c_addr);
-void i2c_stop(void);
-void i2c_write(uint8_t byte);
-void i2c_sleep(void);
+typedef struct i2c_device_t {
+  enum I2CPrescaler prescaler; // clock prescaler.
+  uint32_t scl_freq; // i2c clock drive frequency. NOTE: the slave CPU clock
+                     // frequency must be at least 16 times higher than the SCL
+                     // frequency
+  uint32_t slave_fcpu; // slave max clock frequency NOTE: consider all slaves on
+                       // the bus and use the slowest clock speed here.
+} i2c_device_t;
+
+i2c_status_t i2c_init(i2c_device_t *device);
+i2c_status_t i2c_block_read_byte(uint8_t addr, uint8_t data);
+i2c_status_t i2c_block_read_block(uint8_t addr, uint8_t *buffer, size_t size);
+i2c_status_t i2c_block_write_byte(uint8_t addr, uint8_t data);
+i2c_status_t i2c_block_write_block(uint8_t addr, uint8_t *buffer, size_t size);
+i2c_status_t i2c_close(void);
+i2c_status_t i2c_sleep(void);
+i2c_status_t i2c_wake(void);
 
 #endif // __I2C_H__
